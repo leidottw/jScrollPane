@@ -1,0 +1,19 @@
+{
+  "name": "jscrollpane",
+  "version": "1.0.0",
+  "description": "jScrollPane is a [jQuery](http://www.jquery.com/) plugin which allows you to replace a browser's default scrollbars (on an element which has **overflow: auto**) with a HTML structure that can be easily skinned using CSS.",
+  "main": "script/jquery.jscrollpane.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leidottw/jScrollPane.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leidottw/jScrollPane/issues"
+  },
+  "homepage": "https://github.com/leidottw/jScrollPane#readme"
+}
