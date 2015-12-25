@@ -202,8 +202,8 @@
 				if (!(isScrollableH || isScrollableV)) {
 					elem.removeClass('jspScrollable');
 					pane.css({
-            top: 0,
-            left: 0,
+						top: 0,
+						left: 0,
 						width: container.width() - originalPaddingTotalWidth
 					});
 					removeMousewheel();
@@ -224,8 +224,8 @@
 					resizeScrollbars();
 
 					if (isMaintainingPositon) {
-						scrollToX(maintainAtRight  ? (contentWidth  - paneWidth ) : lastContentX, false);
-						scrollToY(maintainAtBottom ? (contentHeight - paneHeight) : lastContentY, false);
+						scrollToX(maintainAtRight  ? (contentWidth  - paneWidth ) : lastContentX, false, true);
+						scrollToY(maintainAtBottom ? (contentHeight - paneHeight) : lastContentY, false, true);
 					}
 
 					initFocusHandler();
@@ -257,8 +257,8 @@
 					clearInterval(reinitialiseInterval);
 				}
 
-				originalScrollTop && elem.scrollTop(0) && scrollToY(originalScrollTop, false);
-				originalScrollLeft && elem.scrollLeft(0) && scrollToX(originalScrollLeft, false);
+				originalScrollTop && elem.scrollTop(0) && scrollToY(originalScrollTop, false, true);
+				originalScrollLeft && elem.scrollLeft(0) && scrollToX(originalScrollLeft, false, true);
 
 				elem.trigger('jsp-initialised', [isScrollableH || isScrollableV]);
 			}
@@ -688,7 +688,7 @@
 				}
 			}
 
-			function positionDragY(destY, animate)
+			function positionDragY(destY, animate, isReinitialise)
 			{
 				if (!isScrollableV) {
 					return;
@@ -720,12 +720,16 @@
 				}
 				if (animate) {
 					jsp.animate(verticalDrag, 'top', destY,	_positionDragY, function() {
-						elem.trigger('jsp-user-scroll-y', [-destTop, isAtTop, isAtBottom]);
+						if(!isReinitialise) {
+							elem.trigger('jsp-user-scroll-y', [-destTop, isAtTop, isAtBottom]);
+						}
 					});
 				} else {
 					verticalDrag.css('top', destY);
 					_positionDragY(destY);
-					elem.trigger('jsp-user-scroll-y', [-destTop, isAtTop, isAtBottom]);
+					if(!isReinitialise) {
+						elem.trigger('jsp-user-scroll-y', [-destTop, isAtTop, isAtBottom]);
+					}
 				}
 
 			}
@@ -755,7 +759,7 @@
 				elem.trigger('jsp-scroll-y', [-destTop, isAtTop, isAtBottom]).trigger('scroll');
 			}
 
-			function positionDragX(destX, animate)
+			function positionDragX(destX, animate, isReinitialise)
 			{
 				if (!isScrollableH) {
 					return;
@@ -787,12 +791,16 @@
 				}
 				if (animate) {
 					jsp.animate(horizontalDrag, 'left', destX,	_positionDragX, function() {
-						elem.trigger('jsp-user-scroll-x', [-destLeft, isAtLeft, isAtRight]);
+						if(!isReinitialise) {
+							elem.trigger('jsp-user-scroll-x', [-destLeft, isAtLeft, isAtRight]);
+						}
 					});
 				} else {
 					horizontalDrag.css('left', destX);
 					_positionDragX(destX);
-					elem.trigger('jsp-user-scroll-x', [-destLeft, isAtLeft, isAtRight]);
+					if(!isReinitialise) {
+						elem.trigger('jsp-user-scroll-x', [-destLeft, isAtLeft, isAtRight]);
+					}
 				}
 			}
 
@@ -837,16 +845,18 @@
 				}
 			}
 
-			function scrollToY(destY, animate)
+			function scrollToY(destY, animate, isReinitialise)
 			{
+				isReinitialise = isReinitialise || false;
 				var percentScrolled = destY / (contentHeight - paneHeight);
-				positionDragY(percentScrolled * dragMaxY, animate);
+				positionDragY(percentScrolled * dragMaxY, animate, isReinitialise);
 			}
 
-			function scrollToX(destX, animate)
+			function scrollToX(destX, animate, isReinitialise)
 			{
+				isReinitialise = isReinitialise || false;
 				var percentScrolled = destX / (contentWidth - paneWidth);
-				positionDragX(percentScrolled * dragMaxX, animate);
+				positionDragX(percentScrolled * dragMaxX, animate, isReinitialise);
 			}
 
 			function scrollToElement(ele, stickToTop, animate)
