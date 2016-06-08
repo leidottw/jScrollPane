@@ -335,7 +335,6 @@
 									positionDragY(e.pageY - startY, false);
 								}
 							).bind('mouseup.jsp mouseleave.jsp', cancelDrag);
-							return false;
 						}
 					);
 					sizeVerticalScrollbar();
@@ -423,7 +422,6 @@
 									positionDragX(e.pageX - startX, false);
 								}
 							).bind('mouseup.jsp mouseleave.jsp', cancelDrag);
-							return false;
 						}
 					);
 					horizontalTrackWidth = container.innerWidth();
@@ -570,46 +568,50 @@
 						'mousedown.jsp',
 						function(e)
 						{
-							if (e.originalTarget === undefined || e.originalTarget == e.currentTarget) {
-								var clickedTrack = $(this),
-									offset = clickedTrack.offset(),
-									direction = e.pageY - offset.top - verticalDragPosition,
-									scrollTimeout,
-									isFirst = true,
-									doScroll = function()
-									{
-										var offset = clickedTrack.offset(),
-											pos = e.pageY - offset.top - verticalDragHeight / 2,
-											contentDragY = paneHeight * settings.scrollPagePercent,
-											dragY = dragMaxY * contentDragY / (contentHeight - paneHeight);
-										if (direction < 0) {
-											if (verticalDragPosition - dragY > pos) {
-												jsp.scrollByY(-contentDragY);
+							if($(e.target).hasClass('jspTrack')) {
+								if (e.originalTarget === undefined || e.originalTarget == e.currentTarget) {
+									var clickedTrack = $(this),
+										offset = clickedTrack.offset(),
+										direction = e.pageY - offset.top - verticalDragPosition,
+										scrollTimeout,
+										isFirst = true,
+										doScroll = function()
+										{
+											var offset = clickedTrack.offset(),
+												pos = e.pageY - offset.top - verticalDragHeight / 2,
+												contentDragY = paneHeight * settings.scrollPagePercent,
+												dragY = dragMaxY * contentDragY / (contentHeight - paneHeight);
+											if (direction < 0) {
+												if (verticalDragPosition - dragY > pos) {
+													jsp.scrollByY(-contentDragY);
+												} else {
+													positionDragY(pos);
+												}
+											} else if (direction > 0) {
+												if (verticalDragPosition + dragY < pos) {
+													jsp.scrollByY(contentDragY);
+												} else {
+													positionDragY(pos);
+												}
 											} else {
-												positionDragY(pos);
+												cancelClick();
+												return;
 											}
-										} else if (direction > 0) {
-											if (verticalDragPosition + dragY < pos) {
-												jsp.scrollByY(contentDragY);
-											} else {
-												positionDragY(pos);
-											}
-										} else {
-											cancelClick();
-											return;
-										}
-										scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.trackClickRepeatFreq);
-										isFirst = false;
-									},
-									cancelClick = function()
-									{
-										scrollTimeout && clearTimeout(scrollTimeout);
-										scrollTimeout = null;
-										$(document).unbind('mouseup.jsp', cancelClick);
-									};
-								doScroll();
-								$(document).bind('mouseup.jsp', cancelClick);
-								return false;
+											scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.trackClickRepeatFreq);
+											isFirst = false;
+										},
+										cancelClick = function()
+										{
+											scrollTimeout && clearTimeout(scrollTimeout);
+											scrollTimeout = null;
+											$(document).unbind('mouseup.jsp', cancelClick);
+										};
+									doScroll();
+									$(document).bind('mouseup.jsp', cancelClick);
+									return false;
+								}
+							} else {
+								e.stopPropagation();
 							}
 						}
 					);
@@ -620,46 +622,50 @@
 						'mousedown.jsp',
 						function(e)
 						{
-							if (e.originalTarget === undefined || e.originalTarget == e.currentTarget) {
-								var clickedTrack = $(this),
-									offset = clickedTrack.offset(),
-									direction = e.pageX - offset.left - horizontalDragPosition,
-									scrollTimeout,
-									isFirst = true,
-									doScroll = function()
-									{
-										var offset = clickedTrack.offset(),
-											pos = e.pageX - offset.left - horizontalDragWidth / 2,
-											contentDragX = paneWidth * settings.scrollPagePercent,
-											dragX = dragMaxX * contentDragX / (contentWidth - paneWidth);
-										if (direction < 0) {
-											if (horizontalDragPosition - dragX > pos) {
-												jsp.scrollByX(-contentDragX);
+							if($(e.target).hasClass('jspTrack')) {
+								if (e.originalTarget === undefined || e.originalTarget == e.currentTarget) {
+									var clickedTrack = $(this),
+										offset = clickedTrack.offset(),
+										direction = e.pageX - offset.left - horizontalDragPosition,
+										scrollTimeout,
+										isFirst = true,
+										doScroll = function()
+										{
+											var offset = clickedTrack.offset(),
+												pos = e.pageX - offset.left - horizontalDragWidth / 2,
+												contentDragX = paneWidth * settings.scrollPagePercent,
+												dragX = dragMaxX * contentDragX / (contentWidth - paneWidth);
+											if (direction < 0) {
+												if (horizontalDragPosition - dragX > pos) {
+													jsp.scrollByX(-contentDragX);
+												} else {
+													positionDragX(pos);
+												}
+											} else if (direction > 0) {
+												if (horizontalDragPosition + dragX < pos) {
+													jsp.scrollByX(contentDragX);
+												} else {
+													positionDragX(pos);
+												}
 											} else {
-												positionDragX(pos);
+												cancelClick();
+												return;
 											}
-										} else if (direction > 0) {
-											if (horizontalDragPosition + dragX < pos) {
-												jsp.scrollByX(contentDragX);
-											} else {
-												positionDragX(pos);
-											}
-										} else {
-											cancelClick();
-											return;
-										}
-										scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.trackClickRepeatFreq);
-										isFirst = false;
-									},
-									cancelClick = function()
-									{
-										scrollTimeout && clearTimeout(scrollTimeout);
-										scrollTimeout = null;
-										$(document).unbind('mouseup.jsp', cancelClick);
-									};
-								doScroll();
-								$(document).bind('mouseup.jsp', cancelClick);
-								return false;
+											scrollTimeout = setTimeout(doScroll, isFirst ? settings.initialDelay : settings.trackClickRepeatFreq);
+											isFirst = false;
+										},
+										cancelClick = function()
+										{
+											scrollTimeout && clearTimeout(scrollTimeout);
+											scrollTimeout = null;
+											$(document).unbind('mouseup.jsp', cancelClick);
+										};
+									doScroll();
+									$(document).bind('mouseup.jsp', cancelClick);
+									return false;
+								}
+							} else {
+								e.stopPropagation();
 							}
 						}
 					);
